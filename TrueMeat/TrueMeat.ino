@@ -1,3 +1,5 @@
+// 본 예제는 Rob Tillaart 의 HX711.h 라이브러리 및 예제를 참조하여 수정되었습니다
+
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -37,7 +39,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 class MyCallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
-      std::string rxValue = pCharacteristic->getValue();
+      String rxValue = pCharacteristic->getValue();
 
       if (rxValue.length() > 0) {
         Serial.print("Received Value: ");
@@ -66,16 +68,16 @@ void setup() {
 
   // Create a BLE Characteristic
   pTxCharacteristic = pService->createCharacteristic(
-										CHARACTERISTIC_UUID_TX,
-										BLECharacteristic::PROPERTY_NOTIFY
-									);
+CHARACTERISTIC_UUID_TX,
+BLECharacteristic::PROPERTY_NOTIFY
+);
                       
   pTxCharacteristic->addDescriptor(new BLE2902());
 
   BLECharacteristic * pRxCharacteristic = pService->createCharacteristic(
-											 CHARACTERISTIC_UUID_RX,
-											BLECharacteristic::PROPERTY_WRITE
-										);
+ CHARACTERISTIC_UUID_RX,
+BLECharacteristic::PROPERTY_WRITE
+);
 
   pRxCharacteristic->setCallbacks(new MyCallbacks());
 
@@ -132,19 +134,3 @@ void TxWeight() {
     // 동적으로 할당된 메모리 해제
     delete[] dataBytes;
 }
-/*
-void TxWeight() {
-    uint16_t dataSensor = scale.get_units(5);
-
-    // 데이터를 바이트 배열로 변환
-    uint8_t dataBytes[sizeof(dataSensor) + 1];
-    memcpy(dataBytes, &dataSensor, sizeof(dataSensor));
-
-    // 데이터의 끝에 0x0A 추가
-    dataBytes[sizeof(dataSensor)] = 0x0A;
-
-    // BLECharacteristic에 설정
-    pTxCharacteristic->setValue(dataBytes, sizeof(dataSensor) + 1);
-    pTxCharacteristic->notify();
-}
-*/
